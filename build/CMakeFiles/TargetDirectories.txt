@@ -1,0 +1,3 @@
+D:/Aidan/program/test/build/CMakeFiles/raytracer.dir
+D:/Aidan/program/test/build/CMakeFiles/ALL_BUILD.dir
+D:/Aidan/program/test/build/CMakeFiles/ZERO_CHECK.dir
