@@ -5,14 +5,14 @@
 
 float hit_sphere(const point3& centre, float radius, const ray& r) {
     vec3 oc = centre - r.origin();
-    auto a = dot(r.direction(), r.direction());
-    auto b = -2.0 * dot(r.direction(), oc);
-    auto c = dot(oc,oc) - radius*radius;
-    auto discriminant = b*b - 4*a*c;
+    auto a = r.direction().length_squared();
+    auto h = dot(r.direction(), oc);
+    auto c = oc.length_squared() - radius*radius;
+    auto discriminant = h*h - a*c;
     if (discriminant < 0) {
         return -1.0;
     } else {
-        return (-b - std::sqrt(discriminant)) / (2.0*a);
+        return (h - std::sqrt(discriminant)) / a;
     }
 }
 
@@ -57,7 +57,6 @@ int main()
 
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
     for (int j = 0; j < image_height; j++) {
-        std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
         for (int i = 0; i < image_width; i++) {
             auto pixel_centre = pixel00_location + (i * pixel_delta_u) + (j * pixel_delta_v);
             auto ray_dir = pixel_centre - camera_centre;
@@ -67,7 +66,6 @@ int main()
             write_colour(std::cout, pixel_colour);
         }
     }
-    std::clog << "\rDone.                 \n";
 }
 
 
