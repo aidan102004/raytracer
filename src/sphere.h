@@ -1,7 +1,6 @@
 #pragma once
 
 #include "hittable.h"
-#include "vec3.h"
 
 class sphere : public hittable {
 private:
@@ -32,7 +31,8 @@ public:
         //record the hit
         rec.t = root;
         rec.p = r.at(rec.t); //solve for the 3D point
-        rec.normal = (rec.p - centre) / radius; //our normal formula that saves computation instead of using .normalise() which would require sqrt and ^2 calculations
+        vec3 outward_normal = (rec.p - centre) / radius;
+        rec.set_face_normal(r, outward_normal); //sets normal
         return true;
     }   
 };

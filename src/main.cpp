@@ -1,7 +1,9 @@
-#include <iostream>
-#include "colour.h"
-#include "vec3.h"
-#include "ray.h"
+
+#include "utilities.h"
+
+#include "hittable.h"
+#include "hittable_list.h"
+#include "sphere.h"
 
 float hit_sphere(const point3& centre, float radius, const ray& r) {
     vec3 oc = centre - r.origin();
@@ -16,11 +18,10 @@ float hit_sphere(const point3& centre, float radius, const ray& r) {
     }
 }
 
-colour ray_colour(const ray& r) {
-    auto t = hit_sphere(point3(0,0,-1),0.5,r);
-    if (t > 0.0) {
-        vec3 N = normalise(r.at(t) - vec3(0,0,-1));
-        return 0.5*colour(N.x()+1, N.y()+1, N.z()+1);
+colour ray_colour(const ray& r, const hittable& world) {
+    hit_record rec;
+    if(world.hit(0, infinity, rec, r)) {
+        return 0.5*(rec.normal + colour(1,1,1));
     }
 
 
@@ -37,6 +38,12 @@ int main()
 
     int image_height = int(image_width/aspect_ratio);
     image_height = (image_height < 1) ? 1 : image_height;
+
+    //world
+    hittable_list world;
+
+    world.add(std::make_shared<sphere>(point3(0,0,-1), 0.5f));
+    world.add(std::make_shared<sphere>(point3(0,-100.5,-1), 100.0f));
 
     auto focal_len = 1.0;
     auto viewport_height = 2.0;
@@ -62,7 +69,7 @@ int main()
             auto ray_dir = pixel_centre - camera_centre;
             ray r(camera_centre, ray_dir);
 
-            colour pixel_colour = ray_colour(r);
+            colour pixel_colour = ray_colour(r, world);
             write_colour(std::cout, pixel_colour);
         }
     }
