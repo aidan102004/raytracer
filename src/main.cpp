@@ -5,26 +5,13 @@
 #include "hittable_list.h"
 #include "sphere.h"
 
-float hit_sphere(const point3& centre, float radius, const ray& r) {
-    vec3 oc = centre - r.origin();
-    auto a = r.direction().length_squared();
-    auto h = dot(r.direction(), oc);
-    auto c = oc.length_squared() - radius*radius;
-    auto discriminant = h*h - a*c;
-    if (discriminant < 0) {
-        return -1.0;
-    } else {
-        return (h - std::sqrt(discriminant)) / a;
-    }
-}
 
 colour ray_colour(const ray& r, const hittable& world) {
+    //creates record and checks for hit, if hit assign color based on records normal
     hit_record rec;
     if(world.hit(0, infinity, rec, r)) {
         return 0.5*(rec.normal + colour(1,1,1));
     }
-
-
 
     vec3 unit_direction = normalise(r.direction());
     auto a = 0.5*(unit_direction.y() + 1.0);
@@ -50,14 +37,15 @@ int main()
     auto viewport_width = viewport_height * (float(image_width)/image_height);
     auto camera_centre = point3(0,0,0);
 
-    auto viewport_u = vec3(viewport_width, 0, 0);
-    auto viewport_v = vec3(0, -viewport_height, 0);
+    auto viewport_u = vec3(viewport_width, 0, 0); //vector from left to right in x axis
+    auto viewport_v = vec3(0, -viewport_height, 0); //vector from top to bottom in y axis
 
+    //define pixel deltas
     auto pixel_delta_u = viewport_u / image_width;
     auto pixel_delta_v = viewport_v / image_height;
 
     auto viewport_upper_left = camera_centre - vec3(0, 0, focal_len) - viewport_u/2 - viewport_v/2; //moves forward by focal length to be at z = -1, moves left by half the vp and up by half the vp
-    auto pixel00_location = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+    auto pixel00_location = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v); //sets top left pixel location so we can determine all other pixels locations from this
 
 
     //RENDER
