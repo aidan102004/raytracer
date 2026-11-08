@@ -9,7 +9,7 @@
 colour ray_colour(const ray& r, const hittable& world) {
     //creates record and checks for hit, if hit assign color based on records normal
     hit_record rec;
-    if(world.hit(0, infinity, rec, r)) {
+    if(world.hit(interval(0, infinity), rec, r)) {
         return 0.5*(rec.normal + colour(1,1,1));
     }
 

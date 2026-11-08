@@ -9,7 +9,7 @@ private:
 public:
     sphere(const point3& centre, float radius) : centre(centre), radius(std::fmax(0, radius)) {}
 
-    bool hit(float ray_tmin, float ray_tmax, hit_record& rec, const ray& r) const override {
+    bool hit(interval ray_t, hit_record& rec, const ray& r) const override {
         vec3 oc = centre - r.origin(); //the vector from the ray origin to the sphere centre
         //define coefficients of the quadratic
         auto a = r.direction().length_squared(); 
@@ -22,9 +22,9 @@ public:
 
         //find nearest root that lies in acceptable range
         auto root = (h - sqrtd) / a; //try nearest first
-        if (root <= ray_tmin || root >= ray_tmax) {
+        if (!ray_t.surrounds(root)) {
             root = (h + sqrtd) / a; //try further root
-            if (root <= ray_tmin || root >= ray_tmax) {
+            if (!ray_t.surrounds(root)) {
                 return false;
             }
         }
