@@ -111,7 +111,7 @@ inline vec3 normalise(const vec3& v) {
 inline vec3 random_unit_vec() {
     //loop until we find an appropriate vector
     while (true) {
-        auto v = vec3::random_vec(-1,1); //generate vector in the unit sphere
+        auto v = vec3::random_vec(-1,1); //generate vector in the a cube [-1, 1]
         float sqr = v.length_squared();
         //ensure it is within the sphere
         if (1e-160 < sqr && sqr <= 1) {

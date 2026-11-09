@@ -18,6 +18,7 @@ inline float random_float() {
     return std::rand() / (RAND_MAX + 1.0);
 }
 
+/*returns a number in [min, max]*/
 inline float random_float(float min, float max) {
     return min + (max-min)*random_float();
 }

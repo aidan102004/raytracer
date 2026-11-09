@@ -58,6 +58,7 @@ private:
         auto offset = sample_pixel(); //x and y each in [-0.5, 0.5]
         auto pixel_sample = pixel00_location + ((i + offset.x()) * pixel_delta_u) + ((j + offset.y()) * pixel_delta_v); //get the random sampled point within that pixels bounds
 
+        //set ray origin, and direction as difference between sample and origin
         auto ray_origin = centre;
         auto ray_direction = pixel_sample - ray_origin;
 
@@ -76,10 +77,13 @@ private:
         //creates record and checks for hit, if hit assign color based on records normal
         hit_record rec;
         if(world.hit(interval(0.001, infinity), rec, r)) {
-            vec3 direction = generate_random(rec.normal);
-            return 0.5*ray_colour(ray(rec.p, direction), max_depth-1, world);
+            vec3 direction = rec.normal + random_unit_vec();
+            //recursively check for the rays colour bouncing around the scene by passing through a new ray with the old rays point of intersection as the new rays origin, 
+            //and the direction as the new random vector
+            return 0.5*ray_colour(ray(rec.p, direction), max_depth-1, world); 
         }
 
+        //for everything that doesnt hit linearly interpolate
         vec3 unit_direction = normalise(r.direction());
         auto a = 0.5*(unit_direction.y() + 1.0);
         return (1.0 - a)*colour(1.0,1.0,1.0) + a*colour(0.5,0.7,1.0);
