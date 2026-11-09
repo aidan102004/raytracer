@@ -6,6 +6,7 @@
 
 using colour = vec3;
 
+/*gamma correction*/
 inline float linear_to_gamma(float linear_comp) {
     if (linear_comp > 0) {
         return std::sqrt(linear_comp);
