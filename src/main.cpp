@@ -16,9 +16,9 @@ int main()
     world.add(std::make_shared<sphere>(point3(0,-100.5,-1), 100.0f));
     camera cam;
     cam.aspect_ratio = 16.0/9.0;
-    cam.image_width = 400;
+    cam.image_width = 800;
     cam.samples_per_pixel = 100;
-
+    cam.max_recursion = 50;
     cam.render(world);
     
 

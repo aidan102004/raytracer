@@ -40,6 +40,14 @@ public:
     float len() const {
         return std::sqrt(length_squared());
     }
+
+    static vec3 random_vec() {
+        return vec3(random_float(), random_float(), random_float());
+    }
+
+    static vec3 random_vec(float min, float max) {
+        return vec3(random_float(min,max), random_float(min,max), random_float(min,max));
+    }
 };
 
 
@@ -98,5 +106,25 @@ inline vec3 cross(const vec3& v1, const vec3& v2) {
 //returns new normalised unit vector
 inline vec3 normalise(const vec3& v) {
     return v / v.len();
+}
+
+inline vec3 random_unit_vec() {
+    //loop until we find an appropriate vector
+    while (true) {
+        auto v = vec3::random_vec(-1,1); //generate vector in the unit sphere
+        float sqr = v.length_squared();
+        //ensure it is within the sphere
+        if (1e-160 < sqr && sqr <= 1) {
+            return normalise(v); //normalise
+        }
+    }
+}
+/*generates a random unit vector on the hemipshere*/
+inline vec3 generate_random(const vec3& normal) {
+    vec3 v = random_unit_vec(); //generates random unit vector
+    if (dot(v, normal) < 0.0) //finds out whether this vector points away from  the surface, the dp will be < 0 if it doesnt, so we flip it
+        return -v;
+    else 
+        return v;
 }
 

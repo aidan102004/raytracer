@@ -7,6 +7,7 @@ public:
     float aspect_ratio = 1.0;
     int image_width = 100;
     int samples_per_pixel = 10; //count for random samples per pixel
+    int max_recursion = 10;
 
     void render(const hittable& h) {
         initialise();
@@ -17,7 +18,7 @@ public:
                 //loop over number of samples we use
                 for (size_t samp = 0; samp < samples_per_pixel; samp++) {
                     ray r = get_ray(i,j); //gets a random point in the pixel (i,j) returns a ray to that point
-                    pixel_colour += ray_colour(r, h); //adds up all the samples
+                    pixel_colour += ray_colour(r, max_recursion, h); //adds up all the samples
                 }
                 write_colour(std::cout, pixel_samples_scale * pixel_colour); //average
             }
@@ -70,11 +71,13 @@ private:
         return vec3(random_float() - 0.5, random_float() - 0.5, 0);
     }
 
-    colour ray_colour(const ray& r, const hittable& world) {
+    colour ray_colour(const ray& r, int max_depth, const hittable& world) {
+        if (max_depth <= 0) return colour(0,0,0); //if we have exceeded the max num of recursions no more light is gathered
         //creates record and checks for hit, if hit assign color based on records normal
         hit_record rec;
-        if(world.hit(interval(0, infinity), rec, r)) {
-            return 0.5*(rec.normal + colour(1,1,1));
+        if(world.hit(interval(0.001, infinity), rec, r)) {
+            vec3 direction = generate_random(rec.normal);
+            return 0.5*ray_colour(ray(rec.p, direction), max_depth-1, world);
         }
 
         vec3 unit_direction = normalise(r.direction());
