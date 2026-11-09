@@ -23,7 +23,7 @@ public:
 
         //loop through objects and return true if we hit anything 
         for (const auto& obj : objects) {
-            if (obj->hit(interval(ray_t.min, ray_t.max), temp_rec, r)) {
+            if (obj->hit(interval(ray_t.min, closest_so_far), temp_rec, r)) {
                 //if we hit assign rec
                 hit_anything = true;
                 closest_so_far = temp_rec.t;
