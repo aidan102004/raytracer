@@ -41,6 +41,11 @@ public:
         return std::sqrt(length_squared());
     }
 
+    bool near_zero() const {
+        auto s = 1e-8;
+        return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);
+    }
+
     static vec3 random_vec() {
         return vec3(random_float(), random_float(), random_float());
     }
@@ -126,5 +131,9 @@ inline vec3 generate_random(const vec3& normal) {
         return -v;
     else 
         return v;
+}
+
+inline vec3 reflect(const vec3& v, const vec3& n) {
+    return v - 2*dot(v,n)*n;
 }
 

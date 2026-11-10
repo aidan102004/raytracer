@@ -6,8 +6,9 @@ class sphere : public hittable {
 private:
     point3 centre;
     float radius;
+    std::shared_ptr<material> mat;
 public:
-    sphere(const point3& centre, float radius) : centre(centre), radius(std::fmax(0, radius)) {}
+    sphere(const point3& centre, float radius, std::shared_ptr<material> mat) : centre(centre), radius(std::fmax(0, radius)), mat(mat) {}
 
     bool hit(interval ray_t, hit_record& rec, const ray& r) const override {
         vec3 oc = centre - r.origin(); //the vector from the ray origin to the sphere centre
@@ -33,6 +34,7 @@ public:
         rec.p = r.at(rec.t); //solve for the 3D point
         vec3 outward_normal = (rec.p - centre) / radius;
         rec.set_face_normal(r, outward_normal); //sets normal
+        rec.mat = mat; //assign material of sphere to the hit_record
         return true;
     }   
 };

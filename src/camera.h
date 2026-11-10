@@ -2,6 +2,7 @@
 #include "hittable.h"
 #include "colour.h"
 #include "ray.h"
+#include "material.h"
 class camera {
 public:
     float aspect_ratio = 1.0;
@@ -77,11 +78,13 @@ private:
         //creates record and checks for hit, if hit assign color based on records normal
         hit_record rec;
         if(world.hit(interval(0.001, infinity), rec, r)) {
-            vec3 direction = rec.normal + random_unit_vec(); //lambertian reflection
-            //vec3 direction = generate_random();
-            //recursively check for the rays colour bouncing around the scene by passing through a new ray with the old rays point of intersection as the new rays origin, 
-            //and the direction as the new random vector
-            return 0.5*ray_colour(ray(rec.p, direction), max_depth-1, world); 
+            ray scattered;
+            colour attenuation;
+            if (rec.mat->scatter(r, rec, attenuation, scattered)) {
+                return attenuation * ray_colour(scattered, max_depth-1, world); //recursively check for the rays colour bouncing around the scene by passing through a new ray with the old rays point of intersection as the new rays origin, 
+            }
+            return colour(0,0,0);
+
         }
 
         //for everything that doesnt hit linearly interpolate

@@ -12,3 +12,32 @@ public:
         return false;
     }
 };
+
+class lambertian : public material {
+private:
+    colour albedo;
+public:
+    lambertian(const colour& albedo) : albedo(albedo) {}
+
+    bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override {
+        auto scatter_dir = rec.normal + random_unit_vec();
+        if (scatter_dir.near_zero()) scatter_dir = rec.normal; //check random vector isnt opposite from the normal
+        scattered = ray(rec.p, scatter_dir);
+        attenuation = albedo;
+        return true;
+    }
+     
+};
+
+class metal : public material {
+private:
+    colour albedo;
+public:
+    metal(const colour& albedo) : albedo(albedo) {}
+    bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override {
+        vec3 reflected = reflect(r_in.direction(), rec.normal);
+        scattered = ray(rec.p, reflected);
+        attenuation = albedo;
+        return true;
+    }
+};

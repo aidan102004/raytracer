@@ -25,9 +25,9 @@ void write_colour(std::ostream& out, const colour& pixel_colour) {
 
     //transalte [0,1] component values to the byte range [0,255]
     static const interval intensity(0.000, 0.999); //saftey net for clamping
-    int r_byte = int(256 * intensity.clamp(r));
-    int g_byte = int(256 * intensity.clamp(g));
-    int b_byte = int(256 * intensity.clamp(b));
+    int r_byte = static_cast<int>(256 * intensity.clamp(r));
+    int g_byte = static_cast<int>(256 * intensity.clamp(g));
+    int b_byte = static_cast<int>(256 * intensity.clamp(b));
 
     out << r_byte << ' ' << g_byte << ' ' << b_byte << '\n';
 }
