@@ -9,7 +9,7 @@ private:
     std::shared_ptr<material> mat;
 public:
     sphere(const point3& centre, float radius, std::shared_ptr<material> mat) : centre(centre), radius(std::fmax(0, radius)), mat(mat) {}
-
+    
     bool hit(interval ray_t, hit_record& rec, const ray& r) const override {
         vec3 oc = centre - r.origin(); //the vector from the ray origin to the sphere centre
         //define coefficients of the quadratic

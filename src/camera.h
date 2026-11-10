@@ -77,9 +77,12 @@ private:
         if (max_depth <= 0) return colour(0,0,0); //if we have exceeded the max num of recursions no more light is gathered
         //creates record and checks for hit, if hit assign color based on records normal
         hit_record rec;
+        //check whether this ray hits anything in the scene
+        //the 0.001 lowerbound ignores hits close to the ray origin which prevents shadow acne
         if(world.hit(interval(0.001, infinity), rec, r)) {
-            ray scattered;
-            colour attenuation;
+            ray scattered; //the new ray bouncing off the surface
+            colour attenuation; //how much of each colour channel the surface reflects
+            //ask the mat how the ray behaves. Mat fills in output params rec, scattered and ettenuation
             if (rec.mat->scatter(r, rec, attenuation, scattered)) {
                 return attenuation * ray_colour(scattered, max_depth-1, world); //recursively check for the rays colour bouncing around the scene by passing through a new ray with the old rays point of intersection as the new rays origin, 
             }

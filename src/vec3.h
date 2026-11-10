@@ -41,6 +41,7 @@ public:
         return std::sqrt(length_squared());
     }
 
+    //checks if all elements of vector are close to zero
     bool near_zero() const {
         auto s = 1e-8;
         return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);

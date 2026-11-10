@@ -6,7 +6,7 @@ class hit_record {
 public:
     point3 p; //the hit point in 3D space
     vec3 normal; //the surface normal
-    std::shared_ptr<material> mat;
+    std::shared_ptr<material> mat; //material of hit surface
     float t; //how far along the ray hit occured
     bool front_face;
 

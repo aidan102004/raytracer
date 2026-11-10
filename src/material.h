@@ -35,9 +35,9 @@ private:
 public:
     metal(const colour& albedo) : albedo(albedo) {}
     bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override {
-        vec3 reflected = reflect(r_in.direction(), rec.normal);
-        scattered = ray(rec.p, reflected);
-        attenuation = albedo;
+        vec3 reflected = reflect(r_in.direction(), rec.normal); //find reflected vector passing in direction of ray and normal of surface
+        scattered = ray(rec.p, reflected); //assigns new reflected ray to output param
+        attenuation = albedo; //assign attenuation output param
         return true;
     }
 };
