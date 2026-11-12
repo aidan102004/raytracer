@@ -54,9 +54,18 @@ public:
         attenuation = colour(1.0, 1.0, 1.0);
         float ri = rec.front_face ? (1.0/refractive_index) : refractive_index;
         vec3 unit_direction = normalise(r_in.direction());
-        vec3 refracted = refract(unit_direction, rec.normal, ri);
+        float cos_theta = std::fmin(dot(-unit_direction, rec.normal), 1.0);
+        float sin_theta = std::sqrt(1.0 - cos_theta*cos_theta);
+        
+        bool cannot_refract = ri * sin_theta > 1.0;
+        vec3 direction;
 
-        scattered = ray(rec.p, refracted);
+        if (cannot_refract)
+            direction = reflect(unit_direction, rec.normal);
+        else
+            direction = refract(unit_direction, rec.normal, ri);
+
+        scattered = ray(rec.p, direction);
         return true;
     }
 };
