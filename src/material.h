@@ -52,20 +52,21 @@ public:
     
    bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override {
         attenuation = colour(1.0, 1.0, 1.0);
-        float ri = rec.front_face ? (1.0/refractive_index) : refractive_index;
-        vec3 unit_direction = normalise(r_in.direction());
-        float cos_theta = std::fmin(dot(-unit_direction, rec.normal), 1.0);
-        float sin_theta = std::sqrt(1.0 - cos_theta*cos_theta);
+        float ri = rec.front_face ? (1.0/refractive_index) : refractive_index; //ratio n/n'
+        vec3 unit_direction = normalise(r_in.direction()); //direction of incident ray
+        float cos_theta = std::fmin(dot(-unit_direction, rec.normal), 1.0); //use polar dot product to solve for cos
+        float sin_theta = std::sqrt(1.0 - cos_theta*cos_theta); //trig identify to solve for sin
         
-        bool cannot_refract = ri * sin_theta > 1.0;
+        bool cannot_refract = ri * sin_theta > 1.0; //sin0 cant exceed 1, if it does no refracted ray exists which is total internal reflection
         vec3 direction;
 
+        //check bool to reflect or refract depending on result
         if (cannot_refract)
             direction = reflect(unit_direction, rec.normal);
         else
             direction = refract(unit_direction, rec.normal, ri);
 
-        scattered = ray(rec.p, direction);
+        scattered = ray(rec.p, direction); //set output param
         return true;
     }
 };

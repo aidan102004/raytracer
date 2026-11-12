@@ -141,8 +141,8 @@ inline vec3 reflect(const vec3& v, const vec3& n) {
 /*use snells law to find angles of refraction*/
 inline vec3 refract(const vec3& uv, const vec3& n, float etai_over_etat) {
     auto cos_theta = std::fmin(dot(-uv,n),1.0);
-    vec3 r_out_perp = etai_over_etat * (uv + cos_theta*n);
-    vec3 r_out_parl = -std::sqrt(std::fabs(1.0-r_out_perp.length_squared())) * n;
-    return r_out_perp + r_out_parl;
+    vec3 r_out_perp = etai_over_etat * (uv + cos_theta*n); //perpendicular part
+    vec3 r_out_parl = -std::sqrt(std::fabs(1.0-r_out_perp.length_squared())) * n; //parrallel part
+    return r_out_perp + r_out_parl; //vector addition gives the bent refracted ray
 }
 
