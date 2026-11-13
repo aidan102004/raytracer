@@ -9,6 +9,7 @@ public:
     int image_width = 100;
     int samples_per_pixel = 10; //count for random samples per pixel
     int max_recursion = 10;
+    float vfov = 90; //vertical view angle fov
 
     void render(const hittable& h) {
         initialise();
@@ -39,7 +40,9 @@ private:
         pixel_samples_scale = 1.0/samples_per_pixel;
 
         auto focal_len = 1.0;
-        auto viewport_height = 2.0;
+        auto theta = degrees_to_radians(vfov);
+        auto h = std::tan(theta/2);
+        auto viewport_height = 2*h * focal_len;
         auto viewport_width = viewport_height * (float(image_width)/image_height);
         centre = point3(0,0,0);
 
