@@ -47,6 +47,12 @@ public:
 class dielectric : public material {
 private:
     float refractive_index;
+
+    static float reflectance(float cosine, float refraction_index) {
+        auto r0 = (1-refraction_index) / (1 + refraction_index);
+        r0 = r0*r0;
+        return r0 + (1-r0)*std::pow((1-cosine),5);
+    }
 public:
     dielectric(float refractive_index) : refractive_index(refractive_index) {}
     
@@ -61,7 +67,7 @@ public:
         vec3 direction;
 
         //check bool to reflect or refract depending on result
-        if (cannot_refract)
+        if (cannot_refract || reflectance(cos_theta, ri) > random_float())
             direction = reflect(unit_direction, rec.normal);
         else
             direction = refract(unit_direction, rec.normal, ri);
