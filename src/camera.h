@@ -10,6 +10,9 @@ public:
     int samples_per_pixel = 10; //count for random samples per pixel
     int max_recursion = 10;
     float vfov = 90; //vertical view angle fov
+    point3 look_from = point3(0,0,0); //point the camera is looking from
+    point3 look_at = point3(0,0,-1); //point camera is looking at
+    vec3 vup = vec3(0,1,0); //up direcation
 
     void render(const hittable& h) {
         initialise();
@@ -34,26 +37,33 @@ private:
     point3 pixel00_location;
     vec3 pixel_delta_u;
     vec3 pixel_delta_v;
+    vec3 u, v, w; //basic vectors
+
+
     void initialise() {
         image_height = int(image_width/aspect_ratio);
         image_height = (image_height < 1) ? 1 : image_height;
         pixel_samples_scale = 1.0/samples_per_pixel;
 
-        auto focal_len = 1.0;
+        auto focal_len = (look_from-look_at).len();
         auto theta = degrees_to_radians(vfov);
         auto h = std::tan(theta/2);
         auto viewport_height = 2*h * focal_len;
         auto viewport_width = viewport_height * (float(image_width)/image_height);
-        centre = point3(0,0,0);
+        centre = look_from;
 
-        auto viewport_u = vec3(viewport_width, 0, 0); //vector from left to right in x axis
-        auto viewport_v = vec3(0, -viewport_height, 0); //vector from top to bottom in y axis
+        w = normalise(look_from - look_at);
+        u = normalise(cross(vup,w));
+        v = cross(w,u);
+
+        auto viewport_u = viewport_width * u; //vector from left to right in x axis
+        auto viewport_v = viewport_height * -v; //vector from top to bottom in y axis
 
         //define pixel deltas
         pixel_delta_u = viewport_u / image_width;
         pixel_delta_v = viewport_v / image_height;
 
-        auto viewport_upper_left = centre - vec3(0, 0, focal_len) - viewport_u/2 - viewport_v/2; //moves forward by focal length to be at z = -1, moves left by half the vp and up by half the vp
+        auto viewport_upper_left = centre - (focal_len * w) - viewport_u/2 - viewport_v/2; //moves forward by focal length to be at z = -1, moves left by half the vp and up by half the vp
         pixel00_location = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v); //sets top left pixel location so we can determine all other pixels locations from this
     }
 
